@@ -11,9 +11,10 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
 
     [SerializeField]
-    float jumpForce = 400f;
+    public float jump;
 
-    bool onGround = false;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +29,11 @@ public class PlayerController : MonoBehaviour
 
         rb.velocity = new Vector2(x: horizontalDir * speed, rb.velocity.y);
 
+        if (Input.GetButtonDown("Jump"))
+        {
+            rb.AddForce(new Vector2(rb.velocity.x, jump));
+        }
+
     }
 
     void OnMove(InputValue value)
@@ -38,16 +44,33 @@ public class PlayerController : MonoBehaviour
         horizontalDir = inputX;
     }
 
-    void OnJump()
+    void OnJump(InputValue value)
     {
         Debug.Log("Jumping!");
+
+        Vector2 inputDir = value.Get<Vector2>();
+       
+        if (Input.GetButtonDown("Jump"))
+        {
+            rb.AddForce(new Vector2(rb.velocity.x, jump)* jumpSpeed);
+        }
+        
 
         if (!onGround)
         {
             return;
         }
-        Vector3 jumpVector = new Vector3(0, jumpForce, 0);
-        rb.AddForce(jumpVector);
+    
+    }
 
+
+    public float jumpSpeed = 100.0f;
+    private bool onGround = false;
+    private float movementSpeed;
+
+    void OnCollisionStay()
+    {
+        onGround = true;
     }
 }
+
